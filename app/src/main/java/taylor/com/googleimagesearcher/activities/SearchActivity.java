@@ -32,6 +32,7 @@ import java.util.List;
 import taylor.com.googleimagesearcher.R;
 import taylor.com.googleimagesearcher.adapters.ImageResultsAdapter;
 import taylor.com.googleimagesearcher.fragments.EditSettingsFragment;
+import taylor.com.googleimagesearcher.listeners.EndlessScrollListener;
 import taylor.com.googleimagesearcher.models.SearchResult;
 import taylor.com.googleimagesearcher.models.Settings;
 
@@ -70,6 +71,15 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
                 startActivity(i);
             }
         });
+        gvResults.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to your AdapterView
+                customLoadMoreDataFromApi(page);
+                // or customLoadMoreDataFromApi(totalItemsCount);
+            }
+        });
     }
 
     @Override
@@ -84,29 +94,7 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
             public boolean onQueryTextSubmit(String query) {
                 params.remove("q");
                 params.add("q", query);
-                Log.d("DEBUG", "taylor " + params.toString());
-                client.get(SEARCH_URL_PART1, params, new JsonHttpResponseHandler() {
-
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        super.onSuccess(statusCode, headers, response);
-                        try {
-                            if (!response.isNull("responseData")) {
-                                JSONArray results = response.getJSONObject("responseData").getJSONArray("results");
-                                searchResults.clear();
-                                aImageResults.addAll(SearchResult.fromJsonArray(results));
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        super.onFailure(statusCode, headers, responseString, throwable);
-                        Log.d("ERROR", "Google API call failed. " + responseString + " " + throwable.getMessage());
-                    }
-                });
+                executeSearch();
                 return true;
             }
 
@@ -116,6 +104,31 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
             }
         });
         return super.onCreateOptionsMenu(menu);
+    }
+
+    private void executeSearch(){
+        Log.d("DEBUG", "executing search with params: " + params.toString());
+        client.get(SEARCH_URL_PART1, params, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                super.onSuccess(statusCode, headers, response);
+                try {
+                    if (!response.isNull("responseData")) {
+                        JSONArray results = response.getJSONObject("responseData").getJSONArray("results");
+                        aImageResults.addAll(SearchResult.fromJsonArray(results));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+                Log.d("ERROR", "Google API call failed. " + responseString + " " + throwable.getMessage());
+            }
+        });
     }
 
     @Override
@@ -147,5 +160,16 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
         if (!settings.type.equals("all")) params.add("imgtype", settings.type);
         if (!settings.size.equals("all")) params.add("imgsz", settings.size);
         if (!(null == settings.site || settings.site.equals(""))) params.add("as_sitesearch", settings.site);
+    }
+
+    // Append more data into the adapter
+    private void customLoadMoreDataFromApi(int offset) {
+        Log.d("DEBUG", "offset: " + offset);
+        if (offset == 2) aImageResults.clear();
+        offset *= 8;
+        Log.d("DEBUG", "offset *= 8: " + offset);
+        params.remove("start");
+        params.add("start", "" + offset);
+        executeSearch();
     }
 }
