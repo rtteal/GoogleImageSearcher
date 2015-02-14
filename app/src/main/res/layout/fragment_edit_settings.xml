@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/image_size"
+        android:layout_margin="10dp"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spSize"
+        android:layout_toRightOf="@+id/tvSize"
+        android:layout_alignBottom="@+id/tvSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/image_sizes"
+        android:prompt="@string/image_size" />
+
+    <TextView
+        android:id="@+id/tvColor"
+        android:layout_below="@+id/tvSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_filter"
+        android:layout_margin="10dp"
+        android:textSize="18sp" />
+
+    <Spinner
+        android:id="@+id/spColor"
+        android:layout_toRightOf="@+id/tvColor"
+        android:layout_alignBottom="@+id/tvColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/image_colors" />
+
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_below="@+id/tvColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/image_type"
+        android:layout_margin="10dp"
+        android:textSize="18sp"/>
+
+    <Spinner
+        android:id="@+id/spType"
+        android:layout_alignBottom="@+id/tvType"
+        android:layout_toRightOf="@+id/tvType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/image_types" />
+
+    <LinearLayout
+        android:id="@+id/llSite"
+        android:layout_below="@+id/tvType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/tvSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/site_filter"
+        android:layout_marginLeft="10dp"
+        android:textSize="18sp"/>
+
+    <EditText
+        android:id="@+id/etSite"
+        android:layout_alignBottom="@+id/tvSite"
+        android:layout_toRightOf="@+id/tvSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:textSize="18sp"
+        android:hint="@string/abc"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/llSite">
+        <Button
+            android:id="@+id/btSave"
+            android:layout_below="@+id/spSize"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:text="@string/save" />
+
+        <Button
+            android:id="@+id/btCancel"
+            android:layout_toRightOf="@+id/btSave"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="2dp"
+            android:textSize="18sp" />
+
+        </LinearLayout>
+
+
+</RelativeLayout>
