@@ -1,35 +1,35 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"  tools:context=".SearchActivity">
+
+    <com.etsy.android.grid.StaggeredGridView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/gvResults"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:item_margin="4dp"
+        app:column_count="3" />
 <!--
-    <EditText
-        android:layout_width="wrap_content"
+    <GridView
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/etQuery"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/search_prompt"
-        android:layout_toLeftOf="@+id/btSearch"
-        android:layout_toStartOf="@+id/btSearch"
-        android:layout_alignBottom="@+id/btSearch" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/search"
-        android:id="@+id/btSearch"
-        android:layout_alignParentTop="true"
-        android:onClick="onImageSearch"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" /> -->
-
+        android:id="@+id/gvResults"
+        android:layout_marginBottom="5dp"
+        android:columnWidth="100dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:horizontalSpacing="1dp"
+        android:scrollbars="vertical"
+        android:stretchMode="spacingWidthUniform"
+        android:numColumns="3"/>
+-->
+    <!--
     <GridView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/gvResults"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="5dp"
-        android:numColumns="3"/>
+        android:layout_margin="2dp"
+        android:numColumns="3"/> -->
 </RelativeLayout>

@@ -1,7 +1,11 @@
 package taylor.com.googleimagesearcher.activities;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -12,11 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.GridView;
-import android.widget.Spinner;
-import android.widget.Toast;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -38,30 +39,28 @@ import taylor.com.googleimagesearcher.models.Settings;
 
 
 public class SearchActivity extends ActionBarActivity implements EditSettingsFragment.EditSettingsFragmentListener {
-    private GridView gvResults;
+    private StaggeredGridView gvResults;
     private List<SearchResult> searchResults = new ArrayList<>();
     private ImageResultsAdapter aImageResults;
-    private static final String SEARCH_URL_PART1 = "https://ajax.googleapis.com/ajax/services/search/images";
-           // "?v=1.0&q=";
-    private static final String SEARCH_URL_PART2 = "&rsz=8";
+    private static final String SEARCH_URL = "https://ajax.googleapis.com/ajax/services/search/images";
     private AsyncHttpClient client = new AsyncHttpClient();
     private RequestParams params;
     private Settings settings;
+    private int numberOfResults = 64;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        params = new RequestParams();
-        params.add("v", "1.0");
-        params.add("rsz", "8");
         setContentView(R.layout.activity_search);
+        checkForInternetConnectivity();
+        resetParams(); // initialize required request parameters
         setupViews();
         aImageResults = new ImageResultsAdapter(this, searchResults);
         gvResults.setAdapter(aImageResults);
     }
 
     private void setupViews() {
-        gvResults = (GridView) findViewById(R.id.gvResults);
+        gvResults = (StaggeredGridView) findViewById(R.id.gvResults);
         gvResults.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -93,7 +92,9 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
             @Override
             public boolean onQueryTextSubmit(String query) {
                 params.remove("q");
+                params.remove("start");
                 params.add("q", query);
+                aImageResults.clear();
                 executeSearch();
                 return true;
             }
@@ -108,7 +109,7 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
 
     private void executeSearch(){
         Log.d("DEBUG", "executing search with params: " + params.toString());
-        client.get(SEARCH_URL_PART1, params, new JsonHttpResponseHandler() {
+        client.get(SEARCH_URL, params, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -116,6 +117,17 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
                 try {
                     if (!response.isNull("responseData")) {
                         JSONArray results = response.getJSONObject("responseData").getJSONArray("results");
+                        if (response
+                                .getJSONObject("responseData")
+                                .getJSONObject("cursor")
+                                .isNull("estimatedResultCount")) {
+                            numberOfResults = 0;
+                        } else {
+                            numberOfResults = Integer.parseInt(response
+                                    .getJSONObject("responseData")
+                                    .getJSONObject("cursor")
+                                    .getString("estimatedResultCount"));
+                        }
                         aImageResults.addAll(SearchResult.fromJsonArray(results));
                     }
                 } catch (JSONException e) {
@@ -133,12 +145,7 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             FragmentManager fm = getSupportFragmentManager();
             EditSettingsFragment editSettings = EditSettingsFragment.newInstance(settings);
@@ -156,20 +163,64 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
         params.remove("imgtype");
         params.remove("imgsz");
         params.remove("as_sitesearch");
-        if (!settings.color.equals("all")) params.add("imgcolor", settings.color);
-        if (!settings.type.equals("all")) params.add("imgtype", settings.type);
-        if (!settings.size.equals("all")) params.add("imgsz", settings.size);
-        if (!(null == settings.site || settings.site.equals(""))) params.add("as_sitesearch", settings.site);
+        if (settings.color.equals("all")) {
+            params.remove("imgcolor");
+        } else {
+            params.add("imgcolor", settings.color);
+        }
+        if (settings.type.equals("all")) {
+            params.remove("imgtype");
+        }else {
+            params.add("imgtype", settings.type);
+        }
+        if (settings.size.equals("all")) {
+            params.remove("imgsz");
+        }else {
+            params.add("imgsz", settings.size);
+        }
+        if ((null == settings.site || settings.site.equals(""))) {
+            params.remove("as_sitesearch");
+        }else {
+            params.add("as_sitesearch", settings.site);
+        }
     }
 
     // Append more data into the adapter
     private void customLoadMoreDataFromApi(int offset) {
-        Log.d("DEBUG", "offset: " + offset);
         if (offset == 2) aImageResults.clear();
         offset *= 8;
-        Log.d("DEBUG", "offset *= 8: " + offset);
+        // need to make sure not to return the same results repeatedly
+        if (offset > numberOfResults) return;
         params.remove("start");
         params.add("start", "" + offset);
         executeSearch();
+    }
+
+    private void resetParams(){
+        params = new RequestParams();
+        params.add("v", "1.0");
+        params.add("rsz", "8");
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    private void checkForInternetConnectivity() {
+        if (!isNetworkAvailable()) {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Unable to connect to the internet.  Please try again later.");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
     }
 }

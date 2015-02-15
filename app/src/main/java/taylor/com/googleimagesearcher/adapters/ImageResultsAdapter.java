@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.etsy.android.grid.util.DynamicHeightImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -32,20 +33,21 @@ public class ImageResultsAdapter extends ArrayAdapter<SearchResult> {
         if (null == convertView) {
             viewHolder = new ViewHolder();
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_image_result, parent, false);
-            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-            viewHolder.ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
+            //viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+            viewHolder.ivImage = (DynamicHeightImageView) convertView.findViewById(R.id.ivImage);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.ivImage.setImageResource(0);
-        viewHolder.tvTitle.setText(Html.fromHtml(result.title));
+        viewHolder.ivImage.setHeightRatio(result.imageHeight / (double) result.imageWidth);
+        //viewHolder.tvTitle.setText(Html.fromHtml(result.title));
         Picasso.with(getContext()).load(result.thumbUrl).into(viewHolder.ivImage);
         return convertView;
     }
 
     private static class ViewHolder{
-        ImageView ivImage;
-        TextView tvTitle;
+        DynamicHeightImageView ivImage;
+        //TextView tvTitle;
     }
 }
