@@ -32,7 +32,7 @@ public class EditSettingsFragment extends DialogFragment {
         EditSettingsFragment frag = new EditSettingsFragment();
         Bundle args = new Bundle();
         args.putString("title", "Advanced Settings");
-        args.putSerializable("settings", settings);
+        args.putParcelable("settings", settings);
         frag.setArguments(args);
         return frag;
     }
