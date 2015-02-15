@@ -1,7 +1,7 @@
 # GoogleImageViewer
 [Week 2 Project: Grid Image Search](http://courses.codepath.com/courses/intro_to_android/week/2#!assignment)
 
-Time spent: 14 hours in total
+Time spent: 15 hours in total
 
 Completed user stories:
 

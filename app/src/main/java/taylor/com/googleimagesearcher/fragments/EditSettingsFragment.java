@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 
 import taylor.com.googleimagesearcher.R;
 import taylor.com.googleimagesearcher.activities.SearchActivity;
@@ -43,7 +44,7 @@ public class EditSettingsFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_edit_settings, container);
         String title = getArguments().getString("title", "Advanced Filters");
         getDialog().setTitle(title);
-        settings = (Settings) getArguments().getSerializable("settings");
+        settings = getArguments().getParcelable("settings");
 
         sizeSpinner = (Spinner) view.findViewById(R.id.spSize);
         Button btSave = (Button) view.findViewById(R.id.btSave);
@@ -51,7 +52,10 @@ public class EditSettingsFragment extends DialogFragment {
         colorSpinner = (Spinner) view.findViewById(R.id.spColor);
         etSite = (EditText) view.findViewById(R.id.etSite);
         if (null != settings){
-            // TODO figure out how to set the selection
+            setSpinnerToValue(sizeSpinner, settings.size);
+            setSpinnerToValue(typeSpinner, settings.type);
+            setSpinnerToValue(colorSpinner, settings.color);
+            etSite.setText(settings.site);
         }
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,5 +79,17 @@ public class EditSettingsFragment extends DialogFragment {
             }
         });
         return view;
+    }
+
+    private void setSpinnerToValue(Spinner spinner, String value) {
+        int index = 0;
+        SpinnerAdapter adapter = spinner.getAdapter();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            if (adapter.getItem(i).equals(value)) {
+                index = i;
+                break; // terminate loop
+            }
+        }
+        spinner.setSelection(index);
     }
 }

@@ -49,7 +49,7 @@ public class ImageDisplayActivity extends ActionBarActivity {
 
             @Override
             public void onError() {
-                // ...
+                Log.e("ERROR", "error loading image into ImageView");
             }
         });
     }
