@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"  tools:context=".SearchActivity">
+    android:layout_height="match_parent"  tools:context=".SearchActivity"
+    android:background="@drawable/beautiful_flower">
 
     <com.etsy.android.grid.StaggeredGridView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,27 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:item_margin="4dp"
-        app:column_count="3" />
-<!--
-    <GridView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/gvResults"
-        android:layout_marginBottom="5dp"
-        android:columnWidth="100dp"
-        android:gravity="center_vertical|center_horizontal"
-        android:horizontalSpacing="1dp"
-        android:scrollbars="vertical"
-        android:stretchMode="spacingWidthUniform"
-        android:numColumns="3"/>
--->
-    <!--
-    <GridView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/gvResults"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="2dp"
-        android:numColumns="3"/> -->
+        app:column_count="3"
+        android:background="#80000000"/>
 </RelativeLayout>

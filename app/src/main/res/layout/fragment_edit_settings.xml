@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    android:background="@drawable/tool3">
 
     <TextView
         android:id="@+id/tvSize"
@@ -13,7 +15,7 @@
 
     <Spinner
         android:id="@+id/spSize"
-        android:layout_toRightOf="@+id/tvSize"
+        android:layout_toRightOf="@+id/tvType"
         android:layout_alignBottom="@+id/tvSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +33,7 @@
 
     <Spinner
         android:id="@+id/spColor"
-        android:layout_toRightOf="@+id/tvColor"
+        android:layout_toRightOf="@+id/tvType"
         android:layout_alignBottom="@+id/tvColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -85,6 +87,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="15dp"
         android:layout_below="@+id/llSite">
         <Button
             android:id="@+id/btSave"

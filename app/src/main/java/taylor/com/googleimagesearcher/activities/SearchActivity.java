@@ -53,7 +53,6 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        checkForInternetConnectivity();
         resetParams(); // initialize required request parameters
         setupViews();
         aImageResults = new ImageResultsAdapter(this, searchResults);
@@ -80,6 +79,7 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
                 // or customLoadMoreDataFromApi(totalItemsCount);
             }
         });
+        gvResults.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -109,7 +109,9 @@ public class SearchActivity extends ActionBarActivity implements EditSettingsFra
     }
 
     private void executeSearch(){
+        gvResults.setVisibility(View.VISIBLE);
         Log.d("DEBUG", "executing search with params: " + params.toString());
+        checkForInternetConnectivity();
         client.get(SEARCH_URL, params, new JsonHttpResponseHandler() {
 
             @Override
